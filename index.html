@@ -17,6 +17,7 @@
           <li><a href="#home">홈</a></li>
           <li><a href="#about">소개</a></li>
           <li><a href="#services">서비스</a></li>
+          <li><a href="#location">오시는 길</a></li>
           <li><a href="#contact">문의하기</a></li>
         </ul>
       </nav>
@@ -46,6 +47,57 @@
         <p>저작권 표시, 이용약관, 개인정보처리방침 및 추가 링크 정보가 위치하는 영역입니다.</p>
       </article>
     </section>
+
+    <!-- ==================== [오시는 길 영역 (Location)] ==================== -->
+    <section class="location-section" id="location">
+      <div class="section-title">
+        <h2>오시는 길</h2>
+        <p>저희 사무실 위치와 대중교통 안내입니다.</p>
+      </div>
+
+      <div class="location-container">
+        <!-- 지도 컨테이너 -->
+        <div class="map-wrapper">
+          <div id="map" class="map-box"></div>
+          <!-- API 키 미등록 또는 스크립트 미로드 시 표시되는 폴백 안내 -->
+          <div id="map-fallback" class="map-fallback">
+            <div class="fallback-content">
+              <div class="fallback-icon">🗺️</div>
+              <h3>다음 / 카카오 지도</h3>
+              <p>카카오맵 API 키(JavaScript 키)를 등록하시면 실시간 지도가 연동됩니다.</p>
+              <a href="https://map.kakao.com/link/map/MyService,37.566826,126.9786567" target="_blank" rel="noopener noreferrer" class="btn-map-link">
+                다음/카카오 지도에서 보기 &rarr;
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 위치 정보 및 길찾기 안내 -->
+        <div class="location-info">
+          <div class="info-card">
+            <h3>🏢 주소</h3>
+            <p>서울특별시 중구 세종대로 110 (서울시청)</p>
+          </div>
+          <div class="info-card">
+            <h3>🚇 지하철</h3>
+            <p><strong>1호선 / 2호선 시청역</strong> 5번 출구 (도보 2분)</p>
+          </div>
+          <div class="info-card">
+            <h3>🚌 버스</h3>
+            <p>시청앞, 서울광장 정류장 하차</p>
+          </div>
+          <div class="info-card">
+            <h3>📞 문의전화</h3>
+            <p>02-1234-5678 (평일 09:00 ~ 18:00)</p>
+          </div>
+          <div class="info-actions">
+            <a href="https://map.kakao.com/link/to/MyService,37.566826,126.9786567" target="_blank" rel="noopener noreferrer" class="btn-directions">
+              다음/카카오 지도 길찾기
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <!-- ==================== [하단 영역 (Footer)] ==================== -->
@@ -60,5 +112,53 @@
     </div>
   </footer>
 
+  <!-- ==================== [다음 / 카카오 지도 스크립트] ==================== -->
+  <!-- 카카오 개발자 사이트(https://developers.kakao.com)에서 발급받은 JavaScript 키를 appkey 파라미터에 입력하세요. -->
+  <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=YOUR_KAKAO_MAP_KEY"></script>
+  <script>
+    (function initKakaoMap() {
+      var mapContainer = document.getElementById('map');
+      var fallback = document.getElementById('map-fallback');
+
+      // kakao 지도 SDK 로드 확인
+      if (typeof kakao !== 'undefined' && kakao.maps && kakao.maps.Map) {
+        try {
+          var defaultCoords = new kakao.maps.LatLng(37.566826, 126.9786567); // 기본 좌표 (예: 서울시청)
+          var mapOption = {
+            center: defaultCoords,
+            level: 3
+          };
+
+          var map = new kakao.maps.Map(mapContainer, mapOption);
+
+          // 컨트롤(지도/스카이뷰, 줌 컨트롤) 추가
+          var mapTypeControl = new kakao.maps.MapTypeControl();
+          map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
+
+          var zoomControl = new kakao.maps.ZoomControl();
+          map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+
+          // 마커 생성 및 표시
+          var marker = new kakao.maps.Marker({
+            position: defaultCoords
+          });
+          marker.setMap(map);
+
+          // 인포윈도우(말풍선) 표시
+          var infowindow = new kakao.maps.InfoWindow({
+            content: '<div style="padding:7px 12px;font-size:13px;font-weight:600;color:#1f2937;">MyService 본사</div>'
+          });
+          infowindow.open(map, marker);
+
+          // 지도 로드 성공 시 폴백 화면 숨김
+          if (fallback) {
+            fallback.style.display = 'none';
+          }
+        } catch (e) {
+          console.warn('다음/카카오 지도 로드 실패:', e);
+        }
+      }
+    })();
+  </script>
 </body>
 </html>
